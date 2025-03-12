@@ -1,0 +1,8 @@
+batch_size: 18
+dropout_rate: 0.1
+input_size: 51
+learning_rate: 0.001019
+n_hidden_layers: 3
+nodes_first_hidden: 473
+nodes_rest_hidden: 67
+pos_weight: 15

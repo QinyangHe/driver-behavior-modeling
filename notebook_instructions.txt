@@ -1,0 +1,52 @@
+## Instructions to Fix Feature Order Mismatch in PrescriptiveUBI Notebook
+
+1. I've created two Python utility files to help fix the feature order mismatch:
+   - `notebook_fix.py`: A general solution for any XGBoost model
+   - `fix_dataframe.py`: A specific solution for your exact error
+
+2. To fix your notebook, insert these cells *before* the problematic line:
+
+```python
+# Option 1: Use the general utility
+from notebook_fix import fix_feature_order
+amount_pred_df = fix_feature_order(amount_pred_df, xgb_amt)
+```
+
+OR
+
+```python
+# Option 2: Use the direct fix with hardcoded column order 
+from fix_dataframe import fix_amount_pred_df
+amount_pred_df = fix_amount_pred_df(amount_pred_df)
+```
+
+3. After adding one of these cells, the feature order will be fixed and the prediction should work correctly.
+
+4. Alternatively, you can directly modify your code as follows:
+
+```python
+# build df for predicting claim amount
+amount_pred_df = nb_pred_df.copy()
+amount_pred_df['NB_Claim'] = xgb_ng_pred
+
+# Fix feature order mismatch
+expected_order = ['Duration', 'Insured.age', 'Car.age', 'Credit.score', 'Annual.miles.drive', 
+                 'Years.noclaims', 'Annual.pct.driven', 'Total.miles.driven', 'Pct.drive.mon', 
+                 'Pct.drive.tue', 'Pct.drive.wed', 'Pct.drive.thr', 'Pct.drive.fri', 
+                 'Pct.drive.sat', 'Pct.drive.sun', 'Pct.drive.2hrs', 'Pct.drive.3hrs', 
+                 'Pct.drive.4hrs', 'Pct.drive.wkday', 'Pct.drive.wkend', 'Pct.drive.rush am', 
+                 'Pct.drive.rush pm', 'Avgdays.week', 'Accel.06miles', 'Accel.08miles', 
+                 'Accel.09miles', 'Accel.11miles', 'Accel.12miles', 'Accel.14miles', 
+                 'Brake.06miles', 'Brake.08miles', 'Brake.09miles', 'Brake.11miles', 
+                 'Brake.12miles', 'Brake.14miles', 'Left.turn.intensity08', 
+                 'Left.turn.intensity09', 'Left.turn.intensity10', 'Left.turn.intensity11', 
+                 'Left.turn.intensity12', 'Right.turn.intensity08', 'Right.turn.intensity09', 
+                 'Right.turn.intensity10', 'Right.turn.intensity11', 'Right.turn.intensity12', 
+                 'NB_Claim', 'Insured.sex_Male', 'Marital_Single', 'Car.use_Commute', 
+                 'Car.use_Farmer', 'Car.use_Private', 'Region_Urban']
+amount_pred_df = amount_pred_df[expected_order]
+
+xgb_amount = xgb_amt.predict(amount_pred_df)
+```
+
+This should resolve the feature order mismatch error. 
